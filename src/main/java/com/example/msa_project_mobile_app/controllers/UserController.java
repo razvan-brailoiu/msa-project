@@ -1,5 +1,6 @@
 package com.example.msa_project_mobile_app.controllers;
 
+import com.example.msa_project_mobile_app.dto.UserDTO;
 import com.example.msa_project_mobile_app.models.User;
 import com.example.msa_project_mobile_app.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +21,9 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @GetMapping("/")
+    @GetMapping("/getUser")
     public Optional<User> getUserById(@RequestParam Integer id){
         return userRepository.findById(id);
     }
 
-    @PostMapping
-    public User createUser(@RequestBody User user){
-        return userRepository.save(user);
-    }
 }
