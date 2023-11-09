@@ -4,6 +4,7 @@ import com.example.msa_project_mobile_app.dto.UserDTO;
 import com.example.msa_project_mobile_app.models.User;
 import com.example.msa_project_mobile_app.repositories.UserRepository;
 import com.example.msa_project_mobile_app.response.LoginResponse;
+import com.example.msa_project_mobile_app.transformers.UserTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,17 +27,12 @@ public class UserServiceImpl implements UserService{
             return new LoginResponse(false, "Email Address already exist!");
         if(userDTO.getPassword().length() < 10)
             return new LoginResponse(false, "Password must have more the 10 characters");
-        if(!"1234567890".contains(userDTO.getPassword()))
-            return new LoginResponse(false, "Must contain at least 1 number");
+
         if(!userDTO.getEmail().contains("@"))
             return new LoginResponse(false, "Invalid email address");
-        User user = User.builder()
-                .id(userDTO.getId())
-                .email(userDTO.getEmail())
-                .password(passwordEncoder.encode(userDTO.getPassword()))
-                .firstName(userDTO.getFirstName())
-                .lastName(userDTO.getFirstName())
-                .build();
+
+        User user = UserTransformer.mapUserDTOtoUser(userDTO);
+
         userRepository.save(user);
 
         return new LoginResponse(true, "Account created!");

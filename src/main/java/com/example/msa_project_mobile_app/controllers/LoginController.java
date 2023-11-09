@@ -6,6 +6,8 @@ import com.example.msa_project_mobile_app.service.UserServiceImpl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @CrossOrigin
 @RequestMapping()
@@ -20,9 +22,11 @@ public class LoginController {
         return userService.createUser(userDTO);
     }
 
-    @GetMapping (path = "/login")
-    public LoginResponse login(@RequestBody UserDTO userDTO)
+    @PostMapping (path = "/login")
+    public LoginResponse login(@RequestBody Map<String, String> json)
     {
+
+        UserDTO userDTO  =  UserDTO.builder().email(json.get("email")).password(json.get("password")).build();
         return userService.login(userDTO);
     }
 }
