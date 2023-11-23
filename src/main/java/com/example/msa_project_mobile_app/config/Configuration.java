@@ -1,4 +1,4 @@
-package com.example.msa_project_mobile_app;
+package com.example.msa_project_mobile_app.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
