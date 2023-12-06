@@ -9,3 +9,7 @@ body {
     font-size: 16px; /* Increase font size for larger screens */
   }
 }
+
+.wrapper{
+  padding: 20px;
+}
