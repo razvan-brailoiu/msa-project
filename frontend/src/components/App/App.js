@@ -1,10 +1,9 @@
 import './App.css';
 import React, {useState} from 'react';
-import Header from '../Header';
-import HomePage from "../HomePage/HomePage";
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import {BrowserRouter, Redirect, Route, Router, Routes} from 'react-router-dom';
 import {LoginComp} from "../Login/Login";
 import {Register} from "../Register/Register";
+import {HomePage} from "../HomePage/HomePage";
 
 
 function App() {
@@ -13,9 +12,24 @@ function App() {
         setCurrentForm(formName)
     }
   return (
-    <div className="wrapper">
-        { currentForm === "login" ? <LoginComp onFormSwitch={toggleForm} /> : <Register onFormSwitch={toggleForm}/>}
-        <h1>Application</h1>
+    <div className="App">
+        <BrowserRouter>
+            <Routes>
+                <Route path='/' element={<HomePage />} />
+                <Route path='/login' element={<LoginComp />} />
+                <Route path='/register' element={<Register />} />
+            </Routes>
+        </BrowserRouter>
+
+
+        {/*<Router>*/}
+        {/*    <Switch>*/}
+        {/*        <Route path={"login"}> <LoginComp onFormSwitch={toggleForm}/> </Route>*/}
+        {/*        <PrivateRoute path = "/homepage" component={HomePage} />*/}
+        {/*        <Redirect from={'/'} to={"/login"} />*/}
+        {/*    </Switch>*/}
+        {/*</Router>*/}
+
         {/*<BrowserRouter>*/}
         {/*    <Routes>*/}
         {/*        <Route path="/homepage" element={<HomePage />} />*/}
