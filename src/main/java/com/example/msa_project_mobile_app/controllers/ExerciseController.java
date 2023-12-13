@@ -1,22 +1,19 @@
 package com.example.msa_project_mobile_app.controllers;
 
 import com.example.msa_project_mobile_app.dto.ExerciseDTO;
-import com.example.msa_project_mobile_app.models.Exercise;
-import com.example.msa_project_mobile_app.models.User;
-import com.example.msa_project_mobile_app.repositories.ExerciseRepository;
 import com.example.msa_project_mobile_app.service.UserServiceImpl.ExerciseService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("")
+@RequiredArgsConstructor
 public class ExerciseController {
 
     @Autowired
