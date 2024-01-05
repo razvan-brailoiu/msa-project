@@ -6,35 +6,24 @@ import {json, useNavigate} from 'react-router-dom';
 export const LoginComp = (props) => {
     const [email, setEmail] = useState('')
     const [pass, setPass] = useState('')
-    const [error, setError] = useState();
+    const [error, setError] = useState('');
     const navigate = useNavigate();
     const handleSubmit = async (e) => {
         e.preventDefault()
         const formData = {
-            "firstName": "Razvan2",
-            "lastName": "Brailoiu2",
             "email": email,
             "password": pass,
         }
         const loginResponse = await loginUser(formData)
-        const json_response = await loginResponse.json()
-        console.log(json_response.status)
-        if (json_response.status === true){
-            console.log(json_response)
-            console.log("log in success")
-            navigate("/dashboard" )
+        if (loginResponse.ok){
+         localStorage.setItem("authenticated", "true");
+         let json_response = await loginResponse.json();
+         localStorage.setItem("token", json_response.token);
+         console.log(json_response.token)
+         navigate("/workout");
         } else {
-            console.log("log in failed")
-            setError(json_response['message'])
+         setError("Failed to authenticate")
         }
-         // if (loginResponse.ok){
-         //     // localStorage.setItem("authenticated", true);
-         //     navigate("/dashboard");
-         // } else {
-         //     setError(await loginResponse.json()['message'])
-         // }
-
-
     }
 
     const goNext = (e) => {
