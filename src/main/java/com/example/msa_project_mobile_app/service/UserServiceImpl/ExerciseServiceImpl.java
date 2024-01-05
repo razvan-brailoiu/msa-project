@@ -81,5 +81,20 @@ public class ExerciseServiceImpl implements ExerciseService{
         return ResponseEntity.status(404).body(new ArrayList<>());
     }
 
+    @Override
+    public ResponseEntity<List<ExerciseDTO>> getAllExercises(String email)
+    {
+        List<Exercise> exerciseList =  userRepository.findByEmail(email).getExercises();
+        List<ExerciseDTO> exerciseDTOS = new ArrayList<>();
+        if (!exerciseList.isEmpty()){
+            return ResponseEntity.status(404).body(new ArrayList<>());
+        }
+        for (Exercise exercise : exerciseList){
+            ExerciseDTO dtoExercise = new ExerciseDTO(exercise.getMuscleGroup(), exercise.getExerciseName(), exercise.getSetsNumber(), exercise.getRepsNumber());
+            exerciseDTOS.add(dtoExercise);
+        }
+        return ResponseEntity.status(200).body(exerciseDTOS);
+    }
+
 
 }
