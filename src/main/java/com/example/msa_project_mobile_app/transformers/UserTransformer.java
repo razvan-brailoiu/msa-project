@@ -16,7 +16,6 @@ public class UserTransformer {
     public static UserDTO mapUserToUserDTO(User user)
     {
         UserDTO userDTO = UserDTO.builder()
-                .id(user.getId())
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .firstName(user.getFirstName())
@@ -28,7 +27,6 @@ public class UserTransformer {
     public static  User mapUserDTOtoUser(UserDTO userDTO)
     {
         User user = User.builder()
-                .id(userDTO.getId())
                 .email(userDTO.getEmail())
                 .password(userDTO.getPassword())
                 .firstName(userDTO.getFirstName())

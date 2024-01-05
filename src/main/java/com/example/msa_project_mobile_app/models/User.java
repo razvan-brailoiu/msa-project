@@ -16,9 +16,8 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id
-    @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    @Column(name = "EMAIL")
+    private String email;
 
     @Column(name = "FNAME")
     private String firstName;
@@ -26,15 +25,16 @@ public class User implements UserDetails {
     @Column(name = "LNAME")
     private String lastName;
 
-    @Column(name = "EMAIL")
-    private String email;
-
     @Getter
     @Column(name = "PASSWORD")
     private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(targetEntity = Exercise.class, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "ue_fk", referencedColumnName = "email")
+    private List<Exercise> exercises;
 
     public User() {
     }

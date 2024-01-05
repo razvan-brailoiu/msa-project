@@ -3,6 +3,8 @@ package com.example.msa_project_mobile_app.models;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -10,6 +12,8 @@ import java.util.Date;
 @Entity
 @Data
 @Builder
+@Getter
+@Setter
 @Table(name = "EXERCISE")
 public class Exercise {
 
@@ -18,11 +22,8 @@ public class Exercise {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer exercise_unique_id;
 
-    @Column(name = "exercise_id")
-    private Integer exerciseId;
-
-    @Column(name = "user_id")
-    private Integer userId;
+    @Enumerated()
+    private ExerciseType exerciseId;
 
     @Column(name = "muscle_group")
     private String muscleGroup;
@@ -44,10 +45,9 @@ public class Exercise {
 
     }
 
-    public Exercise(Integer exercise_unique_id, Integer exerciseId, Integer userId, String muscleGroup, String exerciseName, Integer setsNumber, Integer repsNumber, String date) {
+    public Exercise(Integer exercise_unique_id, ExerciseType exerciseId, String muscleGroup, String exerciseName, Integer setsNumber, Integer repsNumber, String date) {
         this.exercise_unique_id = exercise_unique_id;
         this.exerciseId = exerciseId;
-        this.userId = userId;
         this.muscleGroup = muscleGroup;
         this.exerciseName = exerciseName;
         this.setsNumber = setsNumber;
@@ -55,9 +55,8 @@ public class Exercise {
         this.date = date;
     }
 
-    public Exercise(Integer exerciseId, Integer userId, String muscleGroup, String exerciseName, Integer setsNumber, Integer repsNumber, String date) {
+    public Exercise(ExerciseType exerciseId, String muscleGroup, String exerciseName, Integer setsNumber, Integer repsNumber, String date) {
         this.exerciseId = exerciseId;
-        this.userId = userId;
         this.muscleGroup = muscleGroup;
         this.exerciseName = exerciseName;
         this.setsNumber = setsNumber;
