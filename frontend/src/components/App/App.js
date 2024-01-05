@@ -4,6 +4,7 @@ import {BrowserRouter, Redirect, Route, Router, Routes} from 'react-router-dom';
 import {LoginComp} from "../Login/Login";
 import {Register} from "../Register/Register";
 import {HomePage} from "../HomePage/HomePage";
+import {WorkoutPage} from "../WorkoutPage/WorkoutPage";
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
                 <Route path='/' element={<HomePage />} />
                 <Route path='/login' element={<LoginComp />} />
                 <Route path='/register' element={<Register />} />
+                <Route path='/workout' element={<WorkoutPage />} />
             </Routes>
         </BrowserRouter>
 
