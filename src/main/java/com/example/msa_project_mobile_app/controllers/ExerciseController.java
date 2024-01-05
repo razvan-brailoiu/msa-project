@@ -45,4 +45,17 @@ public class ExerciseController {
 
         return exerciseService.findExercisesForUser(email, formattedDate);
     }
+
+    @GetMapping("/exercises")
+    public ResponseEntity<List<ExerciseDTO>> getExercisesForUserForGivenDate(@RequestParam String date, @RequestHeader (name="Authorization") String token){
+        String email = jwtService.extractUsername(token.substring(7));
+        return exerciseService.findExercisesForUser(email, date);
+    }
+
+    @GetMapping("/exercise/all")
+    public ResponseEntity<List<ExerciseDTO>> getAllExercises(@RequestHeader (name="Authorization") String token){
+        String email = jwtService.extractUsername(token.substring(7));
+        return exerciseService.getAllExercises(email);
+    }
+
 }
