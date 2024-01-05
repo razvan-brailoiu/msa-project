@@ -2,8 +2,10 @@ package com.example.msa_project_mobile_app.service.UserServiceImpl;
 
 import com.example.msa_project_mobile_app.dto.ExerciseDTO;
 import com.example.msa_project_mobile_app.models.Exercise;
-import com.example.msa_project_mobile_app.models.ExerciseTypes;
+import com.example.msa_project_mobile_app.models.ExerciseType;
+import com.example.msa_project_mobile_app.models.User;
 import com.example.msa_project_mobile_app.repositories.ExerciseRepository;
+import com.example.msa_project_mobile_app.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,9 @@ public class ExerciseServiceImpl implements ExerciseService{
     @Autowired
     public ExerciseRepository exerciseRepository;
 
+    @Autowired
+     UserRepository userRepository;
+
     @Override
     public ResponseEntity<String> registerExercise(ExerciseDTO exerciseDTO) {
         LocalDate today = LocalDate.now();
@@ -26,24 +31,35 @@ public class ExerciseServiceImpl implements ExerciseService{
 
         // hardcoding will be changed after JWT implementation
         Exercise exercise = Exercise.builder()
-                .exerciseId(ExerciseTypes.getExerciseID(exerciseDTO.getExerciseName()))
-                .userId(1)
+                .exerciseId(exerciseDTO.getExerciseType())
                 .exerciseName(exerciseDTO.getExerciseName())
                 .muscleGroup(exerciseDTO.getMuscleGroup())
                 .repsNumber(exerciseDTO.getRepsNumber())
                 .setsNumber(exerciseDTO.getSetsNumber())
                 .date(formattedDate)
                 .build();
-        exerciseRepository.save(exercise);
+        User user = userRepository.findByEmail("laurentiu1.borza@yahoo.com");
+        user.getExercises().add(exercise);
+        userRepository.save(user);
         return ResponseEntity.status(201).body("Exercise added succesfully");
     }
 
     @Override
-    public ResponseEntity<String> deleteExercise(String exerciseName,String date, Integer user_id) {
-        Integer exerciseId = ExerciseTypes.getExerciseID(exerciseName);
-        List<Exercise> exercises = exerciseRepository.findbyexerciseIdanduserIdanddate(date, user_id, exerciseId);
-        if (!exercises.isEmpty()){
-            exerciseRepository.deleteAll(exercises);
+    public ResponseEntity<String> deleteExercise(ExerciseType exerciseName,String date, String email) {
+        User user = userRepository.findByEmail(email);
+        List<Exercise> exercises = user.getExercises();
+        int ok = 0;
+        for(int i = 0; i < exercises.size(); i++)
+        {
+            if(exercises.get(i).getExerciseId().equals(exerciseName) && exercises.get(i).getDate().equals(date))
+            {
+                exercises.remove(exercises.get(i));
+                ok = 1;
+            }
+        }
+        if (ok == 1){
+            user.setExercises(exercises);
+            userRepository.save(user);
             return ResponseEntity.status(201).body("Exercise was deleted succesfully");
         }else {
             return ResponseEntity.status(404).body("Exercise with given data could not be found");
@@ -52,8 +68,8 @@ public class ExerciseServiceImpl implements ExerciseService{
     }
 
     @Override
-    public ResponseEntity<List<ExerciseDTO>> findExercisesForUser(Integer user_id, String date) {
-        List<Exercise> exerciseList =  exerciseRepository.findbydateanduserId(date, user_id);
+    public ResponseEntity<List<ExerciseDTO>> findExercisesForUser(String email, String date) {
+        List<Exercise> exerciseList =  userRepository.findByEmail(email).getExercises();
         if (!exerciseList.isEmpty()){
             List<ExerciseDTO> exerciseDTOS = new ArrayList<>();
             for (Exercise exercise : exerciseList){

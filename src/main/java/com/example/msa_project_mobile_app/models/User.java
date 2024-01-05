@@ -1,9 +1,6 @@
 package com.example.msa_project_mobile_app.models;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,9 +16,8 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id
-    @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    @Column(name = "EMAIL")
+    private String email;
 
     @Column(name = "FNAME")
     private String firstName;
@@ -29,32 +25,21 @@ public class User implements UserDetails {
     @Column(name = "LNAME")
     private String lastName;
 
-    @Column(name = "EMAIL")
-    private String email;
-
+    @Getter
     @Column(name = "PASSWORD")
     private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToMany(targetEntity = Exercise.class, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "ue_fk", referencedColumnName = "email")
+    private List<Exercise> exercises;
+
     public User() {
     }
 
-    public User(Integer id, String firstName, String lastName, String email, String password) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-    }
 
-    public User(String firstName, String lastName, String email, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -69,11 +54,6 @@ public class User implements UserDetails {
     @Override
     public boolean isAccountNonExpired() {
         return true;
-    }
-
-    public String getPassword()
-    {
-        return password;
     }
 
     @Override

@@ -1,0 +1,43 @@
+.calendar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #eff6ff; /* Light blue background tone */
+    padding: 20px;
+}
+
+.open-modal-btn {
+    background-color: #3498db; /* Blue button color */
+    color: #fff;
+    padding: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+.custom-modal {
+    background-color: #fff; /* White background */
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.custom-modal-overlay {
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+}
+
+.modal-header {
+    color: #3498db; /* Blue header color */
+}
+
+.close-modal-btn {
+    background-color: #e74c3c; /* Red button color */
+    color: #fff;
+    padding: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
