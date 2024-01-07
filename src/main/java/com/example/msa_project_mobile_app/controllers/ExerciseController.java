@@ -6,6 +6,7 @@ import com.example.msa_project_mobile_app.models.ExerciseType;
 import com.example.msa_project_mobile_app.service.UserServiceImpl.ExerciseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("")
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "Authorization")
 @RequiredArgsConstructor
 public class ExerciseController {
 
@@ -26,8 +28,9 @@ public class ExerciseController {
     private final JwtService jwtService;
 
     @PostMapping("/exercise")
-    public ResponseEntity<String> postExercise(@RequestBody ExerciseDTO exerciseDTO){
-        return exerciseService.registerExercise(exerciseDTO);
+    public ResponseEntity<String> postExercise(@RequestBody ExerciseDTO exerciseDTO, @RequestHeader (name="Authorization") String token){
+        String email = jwtService.extractUsername(token);
+        return exerciseService.registerExercise(exerciseDTO, email);
     }
 
     @DeleteMapping("/exercise")
@@ -36,15 +39,6 @@ public class ExerciseController {
         return exerciseService.deleteExercise(exerciseName, date, email);
     }
 
-    @GetMapping("/exercise")
-    public ResponseEntity<List<ExerciseDTO>> getExercisesForUser(@RequestHeader (name="Authorization") String token){
-        String email = jwtService.extractUsername(token.substring(7));
-        LocalDate today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        String formattedDate = today.format(formatter);
-
-        return exerciseService.findExercisesForUser(email, formattedDate);
-    }
 
     @GetMapping("/exercises")
     public ResponseEntity<List<ExerciseDTO>> getExercisesForUserForGivenDate(@RequestParam String date, @RequestHeader (name="Authorization") String token){
@@ -57,5 +51,12 @@ public class ExerciseController {
         String email = jwtService.extractUsername(token.substring(7));
         return exerciseService.getAllExercises(email);
     }
+
+    @GetMapping("exercise/statistics")
+    public ResponseEntity<List<Object[]>> getAggregate() {
+        return exerciseService.getStatistics();
+    }
+
+
 
 }

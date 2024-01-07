@@ -24,7 +24,7 @@ public class ExerciseServiceImpl implements ExerciseService{
      UserRepository userRepository;
 
     @Override
-    public ResponseEntity<String> registerExercise(ExerciseDTO exerciseDTO) {
+    public ResponseEntity<String> registerExercise(ExerciseDTO exerciseDTO, String email) {
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String formattedDate = today.format(formatter);
@@ -38,7 +38,7 @@ public class ExerciseServiceImpl implements ExerciseService{
                 .setsNumber(exerciseDTO.getSetsNumber())
                 .date(formattedDate)
                 .build();
-        User user = userRepository.findByEmail("laurentiu1.borza@yahoo.com");
+        User user = userRepository.findByEmail(email);
         user.getExercises().add(exercise);
         userRepository.save(user);
         return ResponseEntity.status(201).body("Exercise added succesfully");
@@ -93,7 +93,13 @@ public class ExerciseServiceImpl implements ExerciseService{
             ExerciseDTO dtoExercise = new ExerciseDTO(exercise.getMuscleGroup(), exercise.getExerciseName(), exercise.getSetsNumber(), exercise.getRepsNumber());
             exerciseDTOS.add(dtoExercise);
         }
-        return ResponseEntity.status(200).body(exerciseDTOS);
+        return ResponseEntity.ok(exerciseDTOS);
+    }
+
+    @Override
+    public ResponseEntity<List<Object[]>> getStatistics(){
+        List<Object[]> exerciseList = exerciseRepository.countByMuscleGroup();
+        return ResponseEntity.status(200).body(exerciseList);
     }
 
 
