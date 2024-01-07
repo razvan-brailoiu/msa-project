@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,6 +32,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
        final String authHeader = request.getHeader("Authorization");
        final String jwtToken;
        final String username;
+       if(request.getHeader("Access-Control-Request-Method") != null && request.getHeader("Access-Control-Request-Method").equals("GET"))
+       {
+           response.setHeader("Access-Control-Allow-Origin", "*");
+           response.setHeader("Access-Control-Allow-Credentials", "true");
+           response.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+           response.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization");
+           response.setStatus(HttpStatus.OK.value());
+           return;
+       }
        if(authHeader == null || !authHeader.startsWith("Bearer"))
        {
            filterChain.doFilter(request, response);

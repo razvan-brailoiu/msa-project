@@ -7,6 +7,7 @@ import com.example.msa_project_mobile_app.models.User;
 import com.example.msa_project_mobile_app.repositories.ExerciseRepository;
 import com.example.msa_project_mobile_app.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -76,7 +77,7 @@ public class ExerciseServiceImpl implements ExerciseService{
                 ExerciseDTO dtoExercise = new ExerciseDTO(exercise.getMuscleGroup(), exercise.getExerciseName(), exercise.getSetsNumber(), exercise.getRepsNumber());
                 exerciseDTOS.add(dtoExercise);
             }
-            return ResponseEntity.status(200).body(exerciseDTOS);
+            return ResponseEntity.ok(exerciseDTOS);
         }
         return ResponseEntity.status(404).body(new ArrayList<>());
     }
@@ -86,9 +87,6 @@ public class ExerciseServiceImpl implements ExerciseService{
     {
         List<Exercise> exerciseList =  userRepository.findByEmail(email).getExercises();
         List<ExerciseDTO> exerciseDTOS = new ArrayList<>();
-        if (!exerciseList.isEmpty()){
-            return ResponseEntity.status(404).body(new ArrayList<>());
-        }
         for (Exercise exercise : exerciseList){
             ExerciseDTO dtoExercise = new ExerciseDTO(exercise.getMuscleGroup(), exercise.getExerciseName(), exercise.getSetsNumber(), exercise.getRepsNumber());
             exerciseDTOS.add(dtoExercise);

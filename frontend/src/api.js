@@ -1,5 +1,5 @@
 import axios from 'axios';
-const BASE_URL = 'http://54.90.209.204:8080'
+const BASE_URL = 'http://localhost:8080'
 
 // 54.90.209.204
 export const loginUser = async (userData)   => {
@@ -67,16 +67,11 @@ export const getStatistics = async (token) => {
 
 export const getExercises = async (token) => {
     // change to certain date
-    return await fetch(`${BASE_URL}/exercises/all`, {
-        method: 'GET',
-        mode: 'cors',
+    return await axios.get(`${BASE_URL}/exercise/all`, {
+        mode:"no-cors",
         headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': 'http://localhost:3000',
-            'Access-Control-Request-Methods': 'GET',
-            'Access-Control-Request-Headers': 'Authorization',
             'Authorization': `Bearer ${token}`
-        },
+        }
     })
 
 
