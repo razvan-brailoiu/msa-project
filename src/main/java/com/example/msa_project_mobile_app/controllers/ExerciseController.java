@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("")
-@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "Authorization")
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequiredArgsConstructor
 public class ExerciseController {
 
@@ -27,12 +27,14 @@ public class ExerciseController {
 
     private final JwtService jwtService;
 
+    @CrossOrigin
     @PostMapping("/exercise")
     public ResponseEntity<String> postExercise(@RequestBody ExerciseDTO exerciseDTO, @RequestHeader (name="Authorization") String token){
         String email = jwtService.extractUsername(token);
         return exerciseService.registerExercise(exerciseDTO, email);
     }
 
+    @CrossOrigin
     @DeleteMapping("/exercise")
     public ResponseEntity<String> deleteExercise(@RequestParam ExerciseType exerciseName, @RequestParam String date, @RequestHeader (name="Authorization") String token){
         String email = jwtService.extractUsername(token.substring(7));

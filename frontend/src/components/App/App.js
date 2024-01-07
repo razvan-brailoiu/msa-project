@@ -5,6 +5,8 @@ import {LoginComp} from "../Login/Login";
 import {Register} from "../Register/Register";
 import {HomePage} from "../HomePage/HomePage";
 import {WorkoutPage} from "../WorkoutPage/WorkoutPage";
+import Calendar from "../Calendar/Calendar";
+import Dashboard from "../Dashboard/Dashboard";
 
 
 function App() {
@@ -20,6 +22,8 @@ function App() {
                 <Route path='/login' element={<LoginComp />} />
                 <Route path='/register' element={<Register />} />
                 <Route path='/workout' element={<WorkoutPage />} />
+                <Route path='/calendar' element={<Calendar/> } />
+                <Route path ='/dashboard' element={<Dashboard/> } />
             </Routes>
         </BrowserRouter>
 
