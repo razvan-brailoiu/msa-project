@@ -10,8 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface ExerciseService {
-    ResponseEntity<String> registerExercise(ExerciseDTO exerciseDTO);
+    ResponseEntity<String> registerExercise(ExerciseDTO exerciseDTO, String email);
     ResponseEntity<String> deleteExercise(ExerciseType exerciseName, String date, String email);
     ResponseEntity<List<ExerciseDTO>> findExercisesForUser(String email, String date);
     ResponseEntity<List<ExerciseDTO>> getAllExercises(String email);
+    ResponseEntity<List<Object[]>> getStatistics();
 }

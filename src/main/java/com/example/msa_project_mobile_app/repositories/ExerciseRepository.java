@@ -17,6 +17,9 @@ public interface ExerciseRepository extends JpaRepository<Exercise, Integer> {
     @Query("SELECT e FROM Exercise e  WHERE  e.date = :input_date ")
     List<Exercise> findbydateanduserId(@Param("input_date") String date);
 
+    @Query("SELECT e.muscleGroup, COUNT (DISTINCT e.muscleGroup, e.date) as count from Exercise e group by e.muscleGroup")
+    List<Object[]> countByMuscleGroup();
+
     @Query("SELECT e FROM Exercise e  WHERE  e.date = :input_date AND e.exerciseId = :input_eid")
     List<Exercise> findbyexerciseIdanduserIdanddate(@Param("input_date") String date, @Param("input_eid") ExerciseType exercise_id );
 }
