@@ -2,16 +2,24 @@
 
 import React, { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
-import {getExercises} from "../../api";
+import {getExercises, getStatistics} from "../../api";
+import {useNavigate} from "react-router-dom";
+import {formatList} from "../../helper";
 
 const Dashboard = () => {
     const [workoutData, setWorkoutData] = useState(null);
+    const navigate = useNavigate();
+    const goToWorkout = () => navigate("/workout")
+    const goToLogin = () => navigate("/login")
+    const goToCalendar = () => navigate("calendar")
 
     useEffect(() => {
         const fetchWorkoutData = async () => {
             try {
-                const response = await getExercises();
-                setWorkoutData(response.data);
+                const token = localStorage.getItem("token");
+                const response = await getStatistics(token)
+                console.log(response)
+                setWorkoutData(formatList(response));
             } catch (error) {
                 console.error('Error fetching workout data:', error);
             }
@@ -21,7 +29,7 @@ const Dashboard = () => {
     }, []); // Empty dependency array to ensure the effect runs once after mount
 
     const chartData = {
-        labels: workoutData?.labels || [],
+        labels: workoutData?.workoutGroups || [],
         datasets: [
             {
                 label: 'Workout Data',
@@ -30,8 +38,9 @@ const Dashboard = () => {
                 borderWidth: 1,
                 hoverBackgroundColor: 'rgba(75,192,192,0.4)',
                 hoverBorderColor: 'rgba(75,192,192,1)',
-                data: workoutData?.data || [],
-            },
+                data: workoutData?.groupCounts || [],
+            }
+
         ],
     };
 
@@ -48,8 +57,17 @@ const Dashboard = () => {
             {workoutData ? (
                 <>
                     <Bar data={chartData} options={chartOptions} />
-                    <button onClick={() => console.log('Button 1 Clicked')}>Button 1</button>
-                    <button onClick={() => console.log('Button 2 Clicked')}>Button 2</button>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
+                        <button onClick={ goToWorkout } style={{ padding: '12px', background: 'green', marginBottom: '10px' }}>
+                            Today's Workout
+                        </button>
+                        <button onClick={goToCalendar} style={{ padding: '12px', background: 'red' }}>
+                            Past Workouts
+                        </button>
+                        <button onClick={goToLogin} style={{ padding: '12px', background: 'red' }}>
+                            Log Out
+                        </button>
+                    </div>
                 </>
             ) : (
                 <p>Loading workout data...</p>

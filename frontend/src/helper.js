@@ -19,6 +19,20 @@ export const formatJson = (listOfDictionaries) => {
     return result
 };
 
+export const formatList = (listOfLists) => {
+
+    const workoutGroups = []
+    const groupCounts = []
+
+    listOfLists.forEach( item => {
+        const [group, count] = item
+        workoutGroups.push(group)
+        groupCounts.push(count)
+    })
+
+    return {workoutGroups, groupCounts}
+}
+
 
 const example = [
     {
