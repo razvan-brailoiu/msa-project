@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Calendar from 'react-calendar';
 import Modal from 'react-modal';
 import 'react-calendar/dist/Calendar.css';
@@ -6,6 +6,7 @@ import './Calendar.css'
 import {getExercises, getExercisesForDate} from "../../api";
 import {formatJson} from "../../helper";
 import BackButton from "../BackButton/BackButton";
+import {useAuth} from "../AuthProvider/AuthProvider";
 
 
 function formatDate(date) {
@@ -15,11 +16,29 @@ function formatDate(date) {
     return `${day}-${month}-${year}`;
 }
 
-const CalendarComponent = () => {
+const CalendarComp = () => {
+    const [loading, setLoading] = useState(false)
     const [date, setDate] = useState(new Date());
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [workoutData, setWorkoutData] = useState([])
+    const {isAuthenticated, token} = useAuth();
+
+    // useEffect = (() => {
+    //
+    //     setLoading(true)
+    //     console.log("In UseEffect")
+    //     const checkAuthentication = () => {
+    //         const authenticated = localStorage.getItem("authenticated") === "true";
+    //         setIsAuthenticated(authenticated);
+    //         return authenticated;
+    //     };
+    //
+    //     if (!checkAuthentication()) {
+    //         console.log("User is not authenticated");
+    //         return;
+    //     }
+    //
+    // }, [])
 
     const openPopup = async () => {
         setIsPopupOpen(true);
@@ -42,6 +61,8 @@ const CalendarComponent = () => {
     const handleDateChange = (newDate) => {
         setDate(newDate);
     };
+
+
 
     return (
         <div className={'calendar-container'}>
@@ -84,4 +105,4 @@ const CalendarComponent = () => {
     );
 };
 
-export default CalendarComponent;
+export default CalendarComp;

@@ -5,8 +5,9 @@ import {LoginComp} from "../Login/Login";
 import {Register} from "../Register/Register";
 import {HomePage} from "../HomePage/HomePage";
 import {WorkoutPage} from "../WorkoutPage/WorkoutPage";
-import Calendar from "../Calendar/Calendar";
+import CalendarComp from "../Calendar/CalendarComp";
 import Dashboard from "../Dashboard/Dashboard";
+import {AuthProvider} from "../AuthProvider/AuthProvider";
 
 
 function App() {
@@ -16,31 +17,19 @@ function App() {
     }
   return (
     <div className="App">
+        <AuthProvider>
         <BrowserRouter>
             <Routes>
                 <Route path='/' element={<HomePage />} />
                 <Route path='/login' element={<LoginComp />} />
                 <Route path='/register' element={<Register />} />
                 <Route path='/workout' element={<WorkoutPage />} />
-                <Route path='/calendar' element={<Calendar/> } />
+                <Route path='/calendar' element={<CalendarComp/> } />
                 <Route path ='/dashboard' element={<Dashboard/> } />
             </Routes>
         </BrowserRouter>
+        </AuthProvider>
 
-
-        {/*<Router>*/}
-        {/*    <Switch>*/}
-        {/*        <Route path={"login"}> <LoginComp onFormSwitch={toggleForm}/> </Route>*/}
-        {/*        <PrivateRoute path = "/homepage" component={HomePage} />*/}
-        {/*        <Redirect from={'/'} to={"/login"} />*/}
-        {/*    </Switch>*/}
-        {/*</Router>*/}
-
-        {/*<BrowserRouter>*/}
-        {/*    <Routes>*/}
-        {/*        <Route path="/homepage" element={<HomePage />} />*/}
-        {/*    </Routes>*/}
-        {/*</BrowserRouter>*/}
     </div>
   );
 }
