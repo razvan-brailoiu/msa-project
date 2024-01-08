@@ -2,12 +2,14 @@ import React, {useState} from "react";
 import PropTypes from "prop-types";
 import {loginUser} from "../../api";
 import {json, useNavigate} from 'react-router-dom';
+import {useAuth} from "../AuthProvider/AuthProvider";
 
 export const LoginComp = (props) => {
     const [email, setEmail] = useState('')
     const [pass, setPass] = useState('')
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const {login} = useAuth()
     const handleSubmit = async (e) => {
         e.preventDefault()
         const formData = {
@@ -19,8 +21,8 @@ export const LoginComp = (props) => {
          localStorage.setItem("authenticated", "true");
          let json_response = await loginResponse.json();
          localStorage.setItem("token", json_response.token);
-         console.log(json_response.token)
-         navigate("/workout");
+         login(json_response.token)
+         navigate("/dashboard");
         } else {
          setError("Failed to authenticate")
         }

@@ -25,6 +25,7 @@ export const WorkoutPage = () => {
     }
 
 
+    // post exercise - working
     const handleConfirm = async () => {
         try {
             const exerciseData = {
@@ -56,19 +57,8 @@ export const WorkoutPage = () => {
         setPopupOpen(false);
     }
 
-    const checkAuthentication = () => {
-        const authenticated = localStorage.getItem("authenticated") === "true";
-        setIsAuthenticated(authenticated);
-        if (authenticated)
-            setToken(localStorage.getItem("token"))
-        return token;
-    };
-
-
     useEffect(() => {
         setLoading(true)
-
-
         const checkAuthentication = () => {
             const authenticated = localStorage.getItem("authenticated") === "true";
             setIsAuthenticated(authenticated);
@@ -85,8 +75,10 @@ export const WorkoutPage = () => {
             try {
                 const access_token = localStorage.getItem("token");
                 const workoutResponse = await getExercises(access_token);
-                if (workoutResponse.length > 0 ){
-                    setWorkoutData(formatJson(workoutResponse))
+                console.log(workoutResponse)
+                if (workoutResponse.data.length > 0 ){
+                    console.log(workoutResponse)
+                    setWorkoutData(formatJson(workoutResponse.data))
                 }
 
             } catch (error) {
@@ -96,18 +88,8 @@ export const WorkoutPage = () => {
 
         fetchData();
 
-        // Move the logic for formatting outside the useEffect
-        if (workoutData.length > 0) {
-            console.log(workoutData);
-            formattedExercises = formatJson(workoutData);
-            console.log(formattedExercises);
-        }
     }, []);
 
-
-    function handleGoBack() {
-        navigate("/dashboard")
-    }
 
     return (
         <div>

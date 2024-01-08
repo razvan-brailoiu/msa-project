@@ -48,19 +48,13 @@ export const getExercisesForDate = async (token, date) => {
 
 export const getStatistics = async (token) => {
 
-    // remove secure!
-    // return await axios(`${BASE_URL}/secure/exercise/statistics`, {
-    //     method: 'POST',
-    //
-    // })
-    const axiosConfig = {
+    return await axios.get(`${BASE_URL}/exercise/statistics`,{
+        mode:"no-cors",
         headers: {
-            'Content-Type': 'application/json',
-            // Add any other custom headers as needed
-        },
-        mode: 'no-cors', // Disable CORS
-    };
-    return axios(`${BASE_URL}/secure/exercise/statistics`, axiosConfig)
+            'Authorization': `Bearer ${token}`
+        }
+    })
+
 }
 
 
@@ -74,41 +68,4 @@ export const getExercises = async (token) => {
         }
     })
 
-
-    // const myHeaders = new Headers();
-    // myHeaders.append("Authorization", `Bearer ${token}`);
-    // myHeaders.append("Content-Type", "application/json")
-    // const requestOptions = {
-    //     method: 'POST',
-    //     headers: myHeaders,
-    //     credentials: 'include'
-    // };
-    // return await fetch(`${BASE_URL}/exercise?user_id=1`, requestOptions)
-
-    // return [
-    //     {
-    //         "muscleGroup": "Legs",
-    //         "exerciseName": "Calf raises",
-    //         "setsNumber": 1,
-    //         "repsNumber": 10
-    //     },
-    //     {
-    //         "muscleGroup": "Legs",
-    //         "exerciseName": "Leg press",
-    //         "setsNumber": 1,
-    //         "repsNumber": 10
-    //     },
-    //     {
-    //         "muscleGroup": "Legs",
-    //         "exerciseName": "Leg press",
-    //         "setsNumber": 1,
-    //         "repsNumber": 12
-    //     },
-    //     {
-    //         "muscleGroup": "Legs",
-    //         "exerciseName": "Leg press",
-    //         "setsNumber": 1,
-    //         "repsNumber": 14
-    //     }
-    // ]
 }

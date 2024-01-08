@@ -1,25 +1,28 @@
 // Dashboard.js
 
 import React, { useState, useEffect } from 'react';
-import { Bar } from 'react-chartjs-2';
 import {getExercises, getStatistics} from "../../api";
 import {useNavigate} from "react-router-dom";
 import {formatList} from "../../helper";
+import BarChart from "../BarChart/BarChart";
 
 const Dashboard = () => {
-    const [workoutData, setWorkoutData] = useState(null);
+    const [workoutData, setWorkoutData] = useState([]);
+    const [workoutCounts, setWorkoutCounts] = useState([])
     const navigate = useNavigate();
     const goToWorkout = () => navigate("/workout")
     const goToLogin = () => navigate("/login")
-    const goToCalendar = () => navigate("calendar")
+    const goToCalendar = () => navigate("/calendar")
 
     useEffect(() => {
         const fetchWorkoutData = async () => {
             try {
                 const token = localStorage.getItem("token");
                 const response = await getStatistics(token)
-                console.log(response)
-                setWorkoutData(formatList(response));
+                let result = formatList(response.data)
+                setWorkoutData(result.workoutGroups)
+                setWorkoutCounts(result.groupCounts)
+
             } catch (error) {
                 console.error('Error fetching workout data:', error);
             }
@@ -28,35 +31,12 @@ const Dashboard = () => {
         fetchWorkoutData();
     }, []); // Empty dependency array to ensure the effect runs once after mount
 
-    const chartData = {
-        labels: workoutData?.workoutGroups || [],
-        datasets: [
-            {
-                label: 'Workout Data',
-                backgroundColor: 'rgba(75,192,192,0.2)',
-                borderColor: 'rgba(75,192,192,1)',
-                borderWidth: 1,
-                hoverBackgroundColor: 'rgba(75,192,192,0.4)',
-                hoverBorderColor: 'rgba(75,192,192,1)',
-                data: workoutData?.groupCounts || [],
-            }
-
-        ],
-    };
-
-    const chartOptions = {
-        scales: {
-            x: { title: { display: true, text: 'Workout Type' } },
-            y: { title: { display: true, text: 'Count' }, beginAtZero: true },
-        },
-    };
-
     return (
         <div>
             <h2>Dashboard</h2>
             {workoutData ? (
                 <>
-                    <Bar data={chartData} options={chartOptions} />
+                    <BarChart workoutCounts={workoutCounts} workoutTypes={workoutData}/>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
                         <button onClick={ goToWorkout } style={{ padding: '12px', background: 'green', marginBottom: '10px' }}>
                             Today's Workout

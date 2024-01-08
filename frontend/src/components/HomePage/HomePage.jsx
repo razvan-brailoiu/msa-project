@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
+import {useNavigate} from "react-router-dom";
 
 export const HomePage = () => {
     const [authenticated, setAuthenticated] = useState(null);
+    const navigate = useNavigate();
     useEffect(() => {
-        const loggedInUser = localStorage.getItem("authenticated");
-        if (loggedInUser) {
-            setAuthenticated(loggedInUser);
-        }
+        navigate("/dashboard")
     }, []);
 
     if (!authenticated) {
