@@ -5,8 +5,40 @@ import {getExercises, postExercise} from "../../api";
 import {formatJson} from "../../helper";
 import {json, useNavigate} from "react-router-dom";
 import BackButton from "../BackButton/BackButton";
+import Select from 'react-select'
 
+const optionsOne = [
+    {value: "Chest press", label: "Chest press"},
+    {value: "Push-ups", label: "Push-ups"},
+    {value: "Pull-ups", label: "Pull-ups"},
+    {value: "Deadlift", label: "Deadlift"},
+    {value: "Shoulder Press", label: "Shoulder Press"},
+    {value: "Squats", label: "Squats"},
+    {value: "Rowing Machine", label: "Rowing Machine"},
+    {value: "Ellyptical", label: "Ellyptical"},
+    {value: "Treadmill", label: "Treadmill"},
+    ]
 
+const optionsTwo = [
+    {value: "Chest", label: "Chest"},
+    {value: "Legs", label: "Legs"},
+    {value: "Back", label: "Back"},
+    {value: "Arms", label: "Arms"},
+    {value: "Cardio", label: "Cardio"},
+]
+
+const optionsThree = [ {value: '1', label: "1"}]
+const optionsFour = [
+    {value: "6", label: "6"},
+    {value: "7", label: "7"},
+    {value: "8", label: "8"},
+    {value: "9", label: "9"},
+    {value: "10", label: "10"},
+    {value: "11", label: "11"},
+    {value: "12", label: "12"},
+    {value: "13", label: "13"},
+    {value: "14", label: "14"},
+]
 export const WorkoutPage = () => {
     // State to hold the workout data
     const [workoutData, setWorkoutData] = useState([]);
@@ -18,7 +50,7 @@ export const WorkoutPage = () => {
     const [exerciseName, setExerciseName] = useState("Chest press")
     const [muscleGroup, setMuscleGroup] = useState('Chest')
     const [setsNumber, setSetsNumber] = useState('1')
-    const [repsNumber, setRepsNumber] = useState('1')
+    const [repsNumber, setRepsNumber] = useState('6')
     let formattedExercises = [];
     const handleFinalise = () => {
         navigate("/dashboard")
@@ -34,6 +66,7 @@ export const WorkoutPage = () => {
                 "setsNumber": setsNumber,
                 "repsNumber": repsNumber
             }
+            console.log("About to post " + exerciseData)
             const token = localStorage.getItem("token")
             console.log(token)
             const response = await postExercise(exerciseData, token)
@@ -55,6 +88,23 @@ export const WorkoutPage = () => {
 
     const handleClosePopup = () => {
         setPopupOpen(false);
+
+    }
+
+    const handleExercise = (selectedOption) => {
+        setExerciseName(selectedOption.value)
+    }
+
+    const handleGroup = (selectedOption) => {
+        setMuscleGroup(selectedOption.value)
+    }
+
+    const handleSetsNumber = (selectedOption) => {
+        setSetsNumber(selectedOption.value)
+    }
+
+    const handleRepsNumber = (selectedOption) => {
+        setRepsNumber(selectedOption.value)
     }
 
     useEffect(() => {
@@ -72,6 +122,15 @@ export const WorkoutPage = () => {
 
         // Fetch data from the API if the user is authenticated
         const fetchData = async () => {
+
+            const exerciseData = {
+                "exerciseName": exerciseName,
+                "muscleGroup": muscleGroup,
+                "setsNumber": setsNumber,
+                "repsNumber": repsNumber
+            }
+            console.log(exerciseData)
+
             try {
                 const access_token = localStorage.getItem("token");
                 const workoutResponse = await getExercises(access_token);
@@ -133,7 +192,6 @@ export const WorkoutPage = () => {
             ) : (
                 <p style={{ textAlign: 'center' }}>User is not authenticated</p>
             )}
-
             <Modal
                 isOpen={isPopupOpen}
                 onRequestClose={handleClosePopup}
@@ -150,46 +208,55 @@ export const WorkoutPage = () => {
                     },
                 }}
             >
-                <h2>Modal Content</h2>
+                <h2>Add your exercise</h2>
                 <div>
                     <form onSubmit={handleConfirm}>
                         <div>
-                            <select style={{ marginBottom: '10px', padding: '5px', fontSize: '14px', width: "100%" }} value={exerciseName} onChange={(e) => setExerciseName(e.target.value)}>
-                                <option value="Chest press">Chest press</option>
-                                <option value="Push-ups">Push-ups</option>
-                                <option value="Pull-ups">Pull-ups</option>
-                            </select>
-                        </div>
+                            <label htmlFor="select1">Exercise Name</label>
+                            <Select placeholder={'ExerciseName'} className={"dropdown-box"} id='select1' options={optionsOne} onChange={handleExercise}> </Select>
+                            <Select placeholder={'Muscle Group'} className={"dropdown-box"} id='select1' options={optionsTwo} onChange={handleGroup}> </Select>
+                            <Select placeholder={'SetsNumber'} className={"dropdown-box"} id='select1' options={optionsThree} onChange={handleSetsNumber}> </Select>
+                            <Select placeholder={'RepsNumber'} className={"dropdown-box"} id='select1' options={optionsFour} onChange={handleRepsNumber}> </Select>
 
-                        <div>
-                            <select style={{ marginBottom: '10px', padding: '5px', fontSize: '14px' }} value={muscleGroup} onChange={(e) => setMuscleGroup(e.target.value)}>
-                                <option value="Chest"> Chest </option>
-                                <option value="Legs"> Legs </option>
-                                <option value="Back"> Back </option>
-                            </select>
-                        </div>
-                        <div>
-                            <select style={{ marginBottom: '10px', padding: '5px', fontSize: '14px' }} value = {setsNumber} onChange={(e) => setSetsNumber(e.target.value)}>
-                                <option value="1"> 1 </option>
-                                <option value="2"> 2 </option>
-                                <option value="3"> 3 </option>
-                                <option value="4"> 4 </option>
-                                <option value="5"> 5 </option>
-                                <option value="6"> 6 </option>
-                            </select>
-                        </div>
-                        <div>
-                            <select style={{ marginBottom: '10px', padding: '5px', fontSize: '14px' }} value = {repsNumber} onChange={(e) => setRepsNumber(e.target.value)}>
-                                <option value="6"> 6 </option>
-                                <option value="7"> 7 </option>
-                                <option value="8"> 8 </option>
-                                <option value="9"> 9 </option>
-                                <option value="10"> 10 </option>
-                                <option value="11"> 11 </option>
-                                <option value="12"> 12 </option>
-                                <option value="13"> 13 </option>
-                                <option value="14"> 14 </option>
-                            </select>
+                        {/*    <select id={'ename'} style={{ marginBottom: '10px', padding: '5px', fontSize: '14px', width: "100%" }} value={exerciseName} onChange={(e) => setExerciseName(e.target.value)}>*/}
+                        {/*        <option value="Chest press">Chest press</option>*/}
+                        {/*        <option value="Push-ups">Push-ups</option>*/}
+                        {/*        <option value="Pull-ups">Pull-ups</option>*/}
+                        {/*        <option value="Deadlift">Deadlift</option>*/}
+                        {/*        <option value="Shoulder Press">Shoulder Press</option>*/}
+                        {/*        <option value="Squats">Squats</option>*/}
+                        {/*        <option value="Rowing Machine">Rowing Machine</option>*/}
+                        {/*        <option value="Ellyptical">Ellyptical</option>*/}
+                        {/*        <option value="Treadmill">Treadmill</option>*/}
+                        {/*    </select>*/}
+                        {/*</div>*/}
+
+                        {/*<div>*/}
+                        {/*    <select name={"Muscle Group"} style={{ marginBottom: '10px', padding: '5px', fontSize: '14px' }} value={muscleGroup} onChange={(e) => setMuscleGroup(e.target.value)}>*/}
+                        {/*        <option value="Chest">Chest</option>*/}
+                        {/*        <option value="Legs">Legs</option>*/}
+                        {/*        <option value="Back">Back</option>*/}
+                        {/*        <option value="Arms">Arms</option>*/}
+                        {/*        <option value={"Cardio"}>Cardio</option>*/}
+                        {/*    </select>*/}
+                        {/*</div>*/}
+                        {/*<div>*/}
+                        {/*    <select name = "Sets" style={{ marginBottom: '10px', padding: '5px', fontSize: '14px' }} value = {setsNumber} onChange={(e) => setSetsNumber(e.target.value)}>*/}
+                        {/*        <option value="1">1</option>*/}
+                        {/*    </select>*/}
+                        {/*</div>*/}
+                        {/*<div>*/}
+                        {/*    <select name="Reps" style={{ marginBottom: '10px', padding: '5px', fontSize: '14px' }} value = {repsNumber} onChange={(e) => setRepsNumber(e.target.value)}>*/}
+                        {/*        <option value="6">6</option>*/}
+                        {/*        <option value="7">7</option>*/}
+                        {/*        <option value="8">8</option>*/}
+                        {/*        <option value="9">9</option>*/}
+                        {/*        <option value="10">10</option>*/}
+                        {/*        <option value="11">11</option>*/}
+                        {/*        <option value="12">12</option>*/}
+                        {/*        <option value="13">13</option>*/}
+                        {/*        <option value="14">14</option>*/}
+                        {/*    </select>*/}
                         </div>
                         <button type={'submit'} style={{ padding: '10px', fontSize: '16px', backgroundColor: 'lightblue', border: 'none', cursor: 'pointer' }} >Confirm</button>
                     </form>
