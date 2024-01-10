@@ -37,8 +37,20 @@ export const postExercise = async (exerciseData, token) => {
 
 }
 
-export const getExercisesForDate = async (token, date) => {
+
+export const deleteExercise = async(date, exerciseData, token) => {
     return await fetch(`${BASE_URL}/exercise?date=${date}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(exerciseData)
+    })
+}
+
+export const getExercisesForDate = async (token, date) => {
+    return await fetch(`${BASE_URL}/exercises?date=${date}`, {
         method: 'GET',
         headers: {
             'Authorization' : `Bearer ${token}`
