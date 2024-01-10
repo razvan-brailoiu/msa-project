@@ -36,9 +36,9 @@ public class ExerciseController {
 
     @CrossOrigin
     @DeleteMapping("/exercise")
-    public ResponseEntity<String> deleteExercise(@RequestParam ExerciseType exerciseName, @RequestParam String date, @RequestHeader (name="Authorization") String token){
+    public ResponseEntity<String> deleteExercise(@RequestParam String date, @RequestHeader (name="Authorization") String token, @RequestBody ExerciseDTO exerciseDTO){
         String email = jwtService.extractUsername(token.substring(7));
-        return exerciseService.deleteExercise(exerciseName, date, email);
+        return exerciseService.deleteExercise(exerciseDTO, date, email);
     }
 
 

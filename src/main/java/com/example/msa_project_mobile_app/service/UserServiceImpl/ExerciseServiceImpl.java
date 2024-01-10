@@ -46,13 +46,17 @@ public class ExerciseServiceImpl implements ExerciseService{
     }
 
     @Override
-    public ResponseEntity<String> deleteExercise(ExerciseType exerciseName,String date, String email) {
+    public ResponseEntity<String> deleteExercise(ExerciseDTO exerciseDTO,String date, String email) {
         User user = userRepository.findByEmail(email);
         List<Exercise> exercises = user.getExercises();
         int ok = 0;
         for(int i = 0; i < exercises.size(); i++)
         {
-            if(exercises.get(i).getExerciseId().equals(exerciseName) && exercises.get(i).getDate().equals(date))
+            if(exercises.get(i).getExerciseName().equals(exerciseDTO.getExerciseName())
+                    && exercises.get(i).getDate().equals(date)
+                    && exercises.get(i).getMuscleGroup().equals(exerciseDTO.getMuscleGroup())
+                    && exercises.get(i).getSetsNumber().equals(exerciseDTO.getSetsNumber())
+                    && exercises.get(i).getRepsNumber().equals(exerciseDTO.getRepsNumber()))
             {
                 exercises.remove(exercises.get(i));
                 ok = 1;
@@ -74,8 +78,10 @@ public class ExerciseServiceImpl implements ExerciseService{
         if (!exerciseList.isEmpty()){
             List<ExerciseDTO> exerciseDTOS = new ArrayList<>();
             for (Exercise exercise : exerciseList){
-                ExerciseDTO dtoExercise = new ExerciseDTO(exercise.getMuscleGroup(), exercise.getExerciseName(), exercise.getSetsNumber(), exercise.getRepsNumber());
-                exerciseDTOS.add(dtoExercise);
+                if( exercise.getDate().equals(date)){
+                    ExerciseDTO dtoExercise = new ExerciseDTO(exercise.getMuscleGroup(), exercise.getExerciseName(), exercise.getSetsNumber(), exercise.getRepsNumber());
+                    exerciseDTOS.add(dtoExercise);
+                }
             }
             return ResponseEntity.ok(exerciseDTOS);
         }
