@@ -1,12 +1,44 @@
 import React, {useEffect, useState} from 'react';
 import Modal from 'react-modal';
 import {useTable} from 'react-table';
-import {getExercises, postExercise} from "../../api";
-import {formatJson} from "../../helper";
+import {deleteExercise, getExercises, getExercisesForDate, postExercise} from "../../api";
+import {formatJson, wrangleDate} from "../../helper";
 import {json, useNavigate} from "react-router-dom";
 import BackButton from "../BackButton/BackButton";
+import Select from 'react-select'
 
+const optionsOne = [
+    {value: "Chest press", label: "Chest press"},
+    {value: "Push-ups", label: "Push-ups"},
+    {value: "Pull-ups", label: "Pull-ups"},
+    {value: "Deadlift", label: "Deadlift"},
+    {value: "Shoulder Press", label: "Shoulder Press"},
+    {value: "Squats", label: "Squats"},
+    {value: "Rowing Machine", label: "Rowing Machine"},
+    {value: "Ellyptical", label: "Ellyptical"},
+    {value: "Treadmill", label: "Treadmill"},
+    ]
 
+const optionsTwo = [
+    {value: "Chest", label: "Chest"},
+    {value: "Legs", label: "Legs"},
+    {value: "Back", label: "Back"},
+    {value: "Arms", label: "Arms"},
+    {value: "Cardio", label: "Cardio"},
+]
+
+const optionsThree = [ {value: '1', label: "1"}]
+const optionsFour = [
+    {value: "6", label: "6"},
+    {value: "7", label: "7"},
+    {value: "8", label: "8"},
+    {value: "9", label: "9"},
+    {value: "10", label: "10"},
+    {value: "11", label: "11"},
+    {value: "12", label: "12"},
+    {value: "13", label: "13"},
+    {value: "14", label: "14"},
+]
 export const WorkoutPage = () => {
     // State to hold the workout data
     const [workoutData, setWorkoutData] = useState([]);
@@ -14,11 +46,13 @@ export const WorkoutPage = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(true);
     const [token, setToken] = useState('');
     const [loading, setLoading] = useState(false)
-    const [isPopupOpen, setPopupOpen] = useState(false)
+    const [isAddPopupOpen, setAddPopupOpen] = useState(false);
+    const [isDeletePopupOpen, setDeletePopupOpen] = useState(false);
     const [exerciseName, setExerciseName] = useState("Chest press")
     const [muscleGroup, setMuscleGroup] = useState('Chest')
     const [setsNumber, setSetsNumber] = useState('1')
-    const [repsNumber, setRepsNumber] = useState('1')
+    const [repsNumber, setRepsNumber] = useState('6')
+
     let formattedExercises = [];
     const handleFinalise = () => {
         navigate("/dashboard")
@@ -34,6 +68,7 @@ export const WorkoutPage = () => {
                 "setsNumber": setsNumber,
                 "repsNumber": repsNumber
             }
+            console.log("About to post " + exerciseData)
             const token = localStorage.getItem("token")
             console.log(token)
             const response = await postExercise(exerciseData, token)
@@ -46,15 +81,64 @@ export const WorkoutPage = () => {
         } catch (error) {
             console.error('Error making API call:', error);
         }
-        handleClosePopup();
+        handleAddClosePopup();
     };
 
-    const handleOpenPopup = () => {
-        setPopupOpen(true);
+    const handleConfirmDeletion = async () => {
+        try {
+            const exerciseData = {
+                "exerciseName": exerciseName,
+                "muscleGroup": muscleGroup,
+                "setsNumber": setsNumber,
+                "repsNumber": repsNumber,
+            }
+            console.log("About to post " + exerciseData)
+            const token = localStorage.getItem("token")
+            const response = await deleteExercise(wrangleDate(), exerciseData, token)
+            if (response.ok){
+                console.log("API call ok")
+            }
+            else {
+                console.error("API call failed")
+            }
+        } catch (error) {
+            console.error('Error making API call:', error);
+        }
+        handleDeleteClosePopup();
     }
 
-    const handleClosePopup = () => {
-        setPopupOpen(false);
+    const handleAddOpenPopup = () => {
+        setAddPopupOpen(true);
+    }
+
+    const handleAddClosePopup = () => {
+        setAddPopupOpen(false);
+
+    }
+
+    const handleDeleteOpenPopup = () => {
+        setDeletePopupOpen(true);
+    }
+
+    const handleDeleteClosePopup = () => {
+        setDeletePopupOpen(false);
+    }
+
+
+    const handleExercise = (selectedOption) => {
+        setExerciseName(selectedOption.value)
+    }
+
+    const handleGroup = (selectedOption) => {
+        setMuscleGroup(selectedOption.value)
+    }
+
+    const handleSetsNumber = (selectedOption) => {
+        setSetsNumber(selectedOption.value)
+    }
+
+    const handleRepsNumber = (selectedOption) => {
+        setRepsNumber(selectedOption.value)
     }
 
     useEffect(() => {
@@ -72,13 +156,22 @@ export const WorkoutPage = () => {
 
         // Fetch data from the API if the user is authenticated
         const fetchData = async () => {
+
+            const exerciseData = {
+                "exerciseName": exerciseName,
+                "muscleGroup": muscleGroup,
+                "setsNumber": setsNumber,
+                "repsNumber": repsNumber
+            }
+            console.log(exerciseData)
+
             try {
                 const access_token = localStorage.getItem("token");
-                const workoutResponse = await getExercises(access_token);
-                console.log(workoutResponse)
-                if (workoutResponse.data.length > 0 ){
-                    console.log(workoutResponse)
-                    setWorkoutData(formatJson(workoutResponse.data))
+                const workoutResponse = await getExercisesForDate(access_token, wrangleDate());
+                const json_response = await workoutResponse.json()
+                if (json_response.length > 0){
+                    console.log(json_response)
+                    setWorkoutData(formatJson(json_response))
                 }
 
             } catch (error) {
@@ -122,10 +215,13 @@ export const WorkoutPage = () => {
                         <p style={{ textAlign: 'center' }}>No exercise data available</p>
                     )}
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
-                        <button onClick={handleOpenPopup} style={{ padding: '12px', background: 'green', marginBottom: '10px' }}>
+                        <button onClick={handleAddOpenPopup} style={{ padding: '12px', background: 'green', marginBottom: '10px' }}>
                             Add exercise
                         </button>
-                        <button onClick={handleFinalise} style={{ padding: '12px', background: 'red' }}>
+                        <button onClick={handleDeleteOpenPopup} style={{ padding: '12px', background: 'red', marginBottom: '10px' }}>
+                            Delete exercise
+                        </button>
+                        <button onClick={handleFinalise} style={{ padding: '12px', background: 'orange' }}>
                             Finalize workout
                         </button>
                     </div>
@@ -133,10 +229,9 @@ export const WorkoutPage = () => {
             ) : (
                 <p style={{ textAlign: 'center' }}>User is not authenticated</p>
             )}
-
             <Modal
-                isOpen={isPopupOpen}
-                onRequestClose={handleClosePopup}
+                isOpen={isAddPopupOpen}
+                onRequestClose={handleAddClosePopup}
                 style={{
                     overlay: {
                         backgroundColor: 'rgba(173, 216, 230, 0.75)',
@@ -150,54 +245,54 @@ export const WorkoutPage = () => {
                     },
                 }}
             >
-                <h2>Modal Content</h2>
+                <h2>Add your exercise</h2>
                 <div>
-                    <form onSubmit={handleConfirm}>
+                    <form onSubmit={handleConfirm} style={{padding: '10px'}} >
                         <div>
-                            <select style={{ marginBottom: '10px', padding: '5px', fontSize: '14px', width: "100%" }} value={exerciseName} onChange={(e) => setExerciseName(e.target.value)}>
-                                <option value="Chest press">Chest press</option>
-                                <option value="Push-ups">Push-ups</option>
-                                <option value="Pull-ups">Pull-ups</option>
-                            </select>
+                            <label htmlFor="select1">Exercise Name</label>
+                            <Select placeholder={'ExerciseName'} className={"dropdown-box"} id='select1' options={optionsOne} onChange={handleExercise}> </Select>
+                            <Select placeholder={'Muscle Group'} className={"dropdown-box"} id='select1' options={optionsTwo} onChange={handleGroup}> </Select>
+                            <Select placeholder={'SetsNumber'} className={"dropdown-box"} id='select1' options={optionsThree} onChange={handleSetsNumber}> </Select>
+                            <Select placeholder={'RepsNumber'} className={"dropdown-box"} id='select1' options={optionsFour} onChange={handleRepsNumber}> </Select>
                         </div>
-
-                        <div>
-                            <select style={{ marginBottom: '10px', padding: '5px', fontSize: '14px' }} value={muscleGroup} onChange={(e) => setMuscleGroup(e.target.value)}>
-                                <option value="Chest"> Chest </option>
-                                <option value="Legs"> Legs </option>
-                                <option value="Back"> Back </option>
-                            </select>
-                        </div>
-                        <div>
-                            <select style={{ marginBottom: '10px', padding: '5px', fontSize: '14px' }} value = {setsNumber} onChange={(e) => setSetsNumber(e.target.value)}>
-                                <option value="1"> 1 </option>
-                                <option value="2"> 2 </option>
-                                <option value="3"> 3 </option>
-                                <option value="4"> 4 </option>
-                                <option value="5"> 5 </option>
-                                <option value="6"> 6 </option>
-                            </select>
-                        </div>
-                        <div>
-                            <select style={{ marginBottom: '10px', padding: '5px', fontSize: '14px' }} value = {repsNumber} onChange={(e) => setRepsNumber(e.target.value)}>
-                                <option value="6"> 6 </option>
-                                <option value="7"> 7 </option>
-                                <option value="8"> 8 </option>
-                                <option value="9"> 9 </option>
-                                <option value="10"> 10 </option>
-                                <option value="11"> 11 </option>
-                                <option value="12"> 12 </option>
-                                <option value="13"> 13 </option>
-                                <option value="14"> 14 </option>
-                            </select>
-                        </div>
-                        <button type={'submit'} style={{ padding: '10px', fontSize: '16px', backgroundColor: 'lightblue', border: 'none', cursor: 'pointer' }} >Confirm</button>
+                        <button type={'submit'} style={{  marginTop: '10px', padding: '10px', fontSize: '16px', backgroundColor: 'lightblue', border: 'none', cursor: 'pointer' }} >Confirm</button>
                     </form>
 
                 </div>
-                <button style={{ padding: '10px', fontSize: '16px', backgroundColor: 'lightblue', border: 'none', cursor: 'pointer' }} onClick={handleClosePopup}>Close</button>
+                <button style={{  marginTop: '20px', padding: '10px', fontSize: '16px', backgroundColor: 'lightblue', border: 'none', cursor: 'pointer' }} onClick={handleAddClosePopup}>Close</button>
             </Modal>
+            <Modal
+                isOpen={isDeletePopupOpen}
+                onRequestClose={handleDeleteClosePopup}
+                style={{
+                    overlay: {
+                        backgroundColor: 'rgba(173, 216, 230, 0.75)',
+                    },
+                    content: {
+                        padding: '20px',
+                        top: '25%',
+                        left: '25%',
+                        alignItems: 'center',
+                        position: 'absolute'
+                    },
+                }}
+            >
+                <h2>Delete certain exercise</h2>
+                <div>
+                    <form onSubmit={handleConfirmDeletion} style={{padding: '10px'}}>
+                        <div>
+                            <label htmlFor="select1">Exercise Name</label>
+                            <Select placeholder={'ExerciseName'} className={"dropdown-box"} id='select1' options={optionsOne} onChange={handleExercise}> </Select>
+                            <Select placeholder={'Muscle Group'} className={"dropdown-box"} id='select1' options={optionsTwo} onChange={handleGroup}> </Select>
+                            <Select placeholder={'SetsNumber'} className={"dropdown-box"} id='select1' options={optionsThree} onChange={handleSetsNumber}> </Select>
+                            <Select placeholder={'RepsNumber'} className={"dropdown-box"} id='select1' options={optionsFour} onChange={handleRepsNumber}> </Select>
+                        </div>
+                        <button type={'submit'} style={{ marginTop: '10px', padding: '10px', fontSize: '16px', backgroundColor: 'red', border: 'none', cursor: 'pointer' }} >Confirm deletion</button>
+                    </form>
 
+                </div>
+                <button style={{ marginTop: '20px', padding: '10px', fontSize: '16px', backgroundColor: 'lightblue', border: 'none', cursor: 'pointer' }} onClick={handleDeleteClosePopup}>Close</button>
+            </Modal>
         </div>
     );
 };
