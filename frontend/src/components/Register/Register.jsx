@@ -25,10 +25,7 @@ export const Register = (props) => {
         const registerResponse = await registerUser(formData)
         const json_response = await registerResponse.text()
         if (registerResponse.ok){
-            localStorage.setItem("authenticated", "true");
-            localStorage.setItem("token", json_response.token)
-            navigate("/dashboard");
-            console.log("Register failed")
+            navigate("/login");
         }
         else {
             setshowDangerAlert(true)

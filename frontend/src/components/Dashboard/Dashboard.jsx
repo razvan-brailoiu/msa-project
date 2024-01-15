@@ -5,19 +5,26 @@ import {getExercises, getStatistics} from "../../api";
 import {useNavigate} from "react-router-dom";
 import {formatList} from "../../helper";
 import BarChart from "../BarChart/BarChart";
+import {useAuth} from "../AuthProvider/AuthProvider";
+import Cookies from "js-cookie";
 
 const Dashboard = () => {
     const [workoutData, setWorkoutData] = useState([]);
     const [workoutCounts, setWorkoutCounts] = useState([])
     const navigate = useNavigate();
+    const authContext = useAuth();
     const goToWorkout = () => navigate("/workout")
     const goToLogin = () => navigate("/login")
     const goToCalendar = () => navigate("/calendar")
 
     useEffect(() => {
+        if (Cookies.get('jwtToken') === undefined){
+            navigate("/login")
+        }
         const fetchWorkoutData = async () => {
             try {
-                const token = localStorage.getItem("token");
+                const token = Cookies.get('jwtToken')
+                console.log("TOken ", token)
                 const response = await getStatistics(token)
                 let result = formatList(response.data)
                 setWorkoutData(result.workoutGroups)
@@ -34,7 +41,7 @@ const Dashboard = () => {
     return (
         <div>
             <h2>Dashboard</h2>
-            {workoutData ? (
+            {Cookies.get('jwtToken') !== undefined && workoutData ? (
                 <>
                     <BarChart workoutCounts={workoutCounts} workoutTypes={workoutData}/>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>

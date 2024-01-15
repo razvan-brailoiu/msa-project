@@ -7,6 +7,7 @@ import {getExercises, getExercisesForDate} from "../../api";
 import {formatJson} from "../../helper";
 import BackButton from "../BackButton/BackButton";
 import {useAuth} from "../AuthProvider/AuthProvider";
+import Cookies from "js-cookie";
 
 
 function formatDate(date) {
@@ -21,7 +22,7 @@ const CalendarComp = () => {
     const [date, setDate] = useState(new Date());
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [workoutData, setWorkoutData] = useState([])
-    const {isAuthenticated, token} = useAuth();
+    const authContext = useAuth();
 
     // useEffect = (() => {
     //
@@ -44,7 +45,7 @@ const CalendarComp = () => {
         setIsPopupOpen(true);
         // add API request per dates
         try {
-            const access_token = localStorage.getItem("token");
+            const access_token = Cookies.get('jwtToken')
             const workoutResponse = await getExercisesForDate(access_token, formatDate(date));
             const json_response = await workoutResponse.json()
             console.log('Calendar json response', json_response)
@@ -74,7 +75,7 @@ const CalendarComp = () => {
         <div className={'calendar-container'}>
             <BackButton destination={'/dashboard'}/>
             <h2> Explore your past workouts </h2>
-            {isAuthenticated ? (
+            {Cookies.get('jwtToken') !== undefined ? (
                 <div>
                     <Calendar onChange={handleDateChange} value={date} />
                     <button onClick={openPopup} className={'open-modal-btn'}>Check out workout</button>

@@ -4,6 +4,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import {useNavigate} from 'react-router-dom';
 import { Alert, Button } from 'react-bootstrap';
 import {useAuth} from "../AuthProvider/AuthProvider";
+import Cookies from 'js-cookie';
+
 
 
 export const LoginComp = () => {
@@ -21,9 +23,11 @@ export const LoginComp = () => {
         }
         const loginResponse = await loginUser(formData)
         if (loginResponse.ok){
-         localStorage.setItem("authenticated", "true");
+
          let json_response = await loginResponse.json();
-         localStorage.setItem("token", json_response.token);
+         const data = { token: json_response.token }
+         Cookies.set('jwtToken', data.token, {expires: 3600})
+
          login(json_response.token)
          navigate("/dashboard");
         } else {
