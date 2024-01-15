@@ -6,6 +6,8 @@ import {formatJson, wrangleDate} from "../../helper";
 import {json, useNavigate} from "react-router-dom";
 import BackButton from "../BackButton/BackButton";
 import Select from 'react-select'
+import {useAuth} from "../AuthProvider/AuthProvider";
+import Cookies from "js-cookie";
 
 const optionsOne = [
     {value: "Chest press", label: "Chest press"},
@@ -43,7 +45,7 @@ export const WorkoutPage = () => {
     // State to hold the workout data
     const [workoutData, setWorkoutData] = useState([]);
     const navigate = useNavigate();
-    const [isAuthenticated, setIsAuthenticated] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [token, setToken] = useState('');
     const [loading, setLoading] = useState(false)
     const [isAddPopupOpen, setAddPopupOpen] = useState(false);
@@ -52,6 +54,7 @@ export const WorkoutPage = () => {
     const [muscleGroup, setMuscleGroup] = useState('Chest')
     const [setsNumber, setSetsNumber] = useState('1')
     const [repsNumber, setRepsNumber] = useState('6')
+    const authContext = useAuth();
 
     let formattedExercises = [];
     const handleFinalise = () => {
@@ -69,7 +72,7 @@ export const WorkoutPage = () => {
                 "repsNumber": repsNumber
             }
             console.log("About to post " + exerciseData)
-            const token = localStorage.getItem("token")
+            const token = Cookies.get("jwtToken")
             console.log(token)
             const response = await postExercise(exerciseData, token)
             if (response.ok){
@@ -93,7 +96,7 @@ export const WorkoutPage = () => {
                 "repsNumber": repsNumber,
             }
             console.log("About to post " + exerciseData)
-            const token = localStorage.getItem("token")
+            const token = Cookies.get("jwtToken")
             const response = await deleteExercise(wrangleDate(), exerciseData, token)
             if (response.ok){
                 console.log("API call ok")
@@ -142,17 +145,21 @@ export const WorkoutPage = () => {
     }
 
     useEffect(() => {
+        if(Cookies.get('jwtToken') === undefined)
+            {   navigate("/login") }
         setLoading(true)
-        const checkAuthentication = () => {
-            const authenticated = localStorage.getItem("authenticated") === "true";
-            setIsAuthenticated(authenticated);
-            return authenticated;
-        };
-
-        if (!checkAuthentication()) {
-            console.log("User is not authenticated");
-            return;
-        }
+        // const checkAuthentication = () => {
+        //     console.log('Check authentication', authContext)
+        //     const authenticated = authContext.isAuthenticated === true;
+        //     setIsAuthenticated(authenticated);
+        //     console.log('Authenticated' , authenticated, ' context ', authContext.isAuthenticated)
+        //     return authenticated;
+        // };
+        //
+        // if (!checkAuthentication()) {
+        //     console.log("User is not authenticated");
+        //     return;
+        // }
 
         // Fetch data from the API if the user is authenticated
         const fetchData = async () => {
@@ -166,7 +173,7 @@ export const WorkoutPage = () => {
             console.log(exerciseData)
 
             try {
-                const access_token = localStorage.getItem("token");
+                const access_token = Cookies.get('jwtToken')
                 const workoutResponse = await getExercisesForDate(access_token, wrangleDate());
                 const json_response = await workoutResponse.json()
                 if (json_response.length > 0){
@@ -187,7 +194,7 @@ export const WorkoutPage = () => {
     return (
         <div>
             <BackButton destination={'/dashboard'}/>
-            {isAuthenticated ? (
+            {Cookies.get("jwtToken") !== undefined ? (
                 <div>
                     <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Exercise Data</h2>
                     {workoutData.length > 0 ? (

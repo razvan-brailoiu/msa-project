@@ -12,6 +12,8 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(null);
 
     const login = (newToken) => {
+        localStorage.setItem("authenticated", "true")
+        localStorage.setItem("token", newToken)
         setAuthenticated(true);
         console.log("User logged in")
         setToken(newToken);
