@@ -46,8 +46,11 @@ const CalendarComp = () => {
         try {
             const access_token = localStorage.getItem("token");
             const workoutResponse = await getExercisesForDate(access_token, formatDate(date));
-            if (workoutResponse.length > 0) {
-                setWorkoutData(formatJson(workoutResponse))
+            const json_response = await workoutResponse.json()
+            console.log('Calendar json response', json_response)
+            if (json_response.length > 0){
+                console.log(json_response)
+                setWorkoutData(formatJson(json_response))
             }
 
         } catch (error) {
@@ -56,7 +59,10 @@ const CalendarComp = () => {
 
     }
 
-    const closePopup = () => setIsPopupOpen(false);
+    const closePopup = () => {
+        setWorkoutData([]);
+        setIsPopupOpen(false);
+    }
 
     const handleDateChange = (newDate) => {
         setDate(newDate);
@@ -67,6 +73,7 @@ const CalendarComp = () => {
     return (
         <div className={'calendar-container'}>
             <BackButton destination={'/dashboard'}/>
+            <h2> Explore your past workouts </h2>
             {isAuthenticated ? (
                 <div>
                     <Calendar onChange={handleDateChange} value={date} />
