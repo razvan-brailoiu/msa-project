@@ -101,8 +101,13 @@ public class ExerciseServiceImpl implements ExerciseService{
     }
 
     @Override
-    public ResponseEntity<List<Object[]>> getStatistics(){
-        List<Object[]> exerciseList = exerciseRepository.countByMuscleGroup();
+    public ResponseEntity<List<Object[]>> getStatistics(String email){
+        User user = userRepository.findByEmail(email);
+//        List<Exercise>
+//        for (Exercise exercise : user.getExercises()){
+//
+//        }
+        List<Object[]> exerciseList = exerciseRepository.countByMuscleGroup(email);
         return ResponseEntity.status(200).body(exerciseList);
     }
 

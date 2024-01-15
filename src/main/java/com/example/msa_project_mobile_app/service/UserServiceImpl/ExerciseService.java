@@ -14,5 +14,5 @@ public interface ExerciseService {
     ResponseEntity<String> deleteExercise(ExerciseDTO exerciseDTO, String date, String email);
     ResponseEntity<List<ExerciseDTO>> findExercisesForUser(String email, String date);
     ResponseEntity<List<ExerciseDTO>> getAllExercises(String email);
-    ResponseEntity<List<Object[]>> getStatistics();
+    ResponseEntity<List<Object[]>> getStatistics(String email);
 }

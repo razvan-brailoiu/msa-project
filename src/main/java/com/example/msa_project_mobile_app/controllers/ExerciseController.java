@@ -56,7 +56,8 @@ public class ExerciseController {
 
     @GetMapping("exercise/statistics")
     public ResponseEntity<List<Object[]>> getAggregate(@RequestHeader (name="Authorization") String token) {
-        return exerciseService.getStatistics();
+        String email = jwtService.extractUsername(token.substring(7));
+        return exerciseService.getStatistics(email);
     }
 
 
